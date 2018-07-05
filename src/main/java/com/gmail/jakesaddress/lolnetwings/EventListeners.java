@@ -20,18 +20,19 @@ public class EventListeners {
   @Listener
   public void onClientConnectionJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player) {
     BossBarManager.createBossBar(player);
-    BossBarManager.setBossBarVisible(player, BossBarManager.isGameModeSurvival(player));
+    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET)));
   }
 
   @Listener
   public void onChangeGameMode(ChangeGameModeEvent event, @Getter("getTargetEntity") Player player) {
-    BossBarManager.setBossBarVisible(player, event.getGameMode() == GameModes.SURVIVAL);
+    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()));
   }
 
   @Listener
   public void onMoveEntity(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
 
-    if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false)) {
+    if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false) &&
+        BossBarManager.isValidGameMode(player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET))) {
 
       Vector3d velocity = player.getVelocity();
       double speed = Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getZ(), 2));
@@ -39,10 +40,10 @@ public class EventListeners {
       if (player.get(Keys.IS_SNEAKING).orElse(false)) {
         if (BossBarManager.getBossBarValue(player) > 0) {
           player.setVelocity(new Vector3d(velocity.getX() * 1.1, velocity.getY() * 1.1, velocity.getZ() * 1.1));
-          BossBarManager.changeBossBarValue(player, (float) -((speed * 1.1) / 10));
+          BossBarManager.changeBossBarValue(player, (float) -((speed * 1.1) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
         }
       } else {
-        BossBarManager.changeBossBarValue(player, (float) (speed / 100));
+        BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
       }
 
     }

@@ -3,10 +3,12 @@ package com.gmail.jakesaddress.lolnetwings;
 import org.spongepowered.api.boss.BossBarColors;
 import org.spongepowered.api.boss.BossBarOverlays;
 import org.spongepowered.api.boss.ServerBossBar;
-import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.text.Text;
+import org.spongepowered.api.text.serializer.TextSerializer;
+import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +38,7 @@ final class BossBarManager {
         .color(BossBarColors.RED)
         .createFog(false)
         .darkenSky(false)
-        .name(Text.of("Glide Boost"))
+        .name(TextSerializers.FORMATTING_CODE.deserialize(LolnetWings.getInstance().getConfiguration().getConfigMapper().getBossBarTitle()))
         .overlay(BossBarOverlays.PROGRESS)
         .percent(0.0F)
         .playEndBossMusic(false)
@@ -54,8 +56,10 @@ final class BossBarManager {
     return 0;
   }
 
-  static boolean isGameModeSurvival(Player player) {
-    return player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET) == GameModes.SURVIVAL;
+  static boolean isValidGameMode(GameMode gameMode) {
+    return ((gameMode == GameModes.SURVIVAL) ||
+            (gameMode == GameModes.ADVENTURE) ||
+            (gameMode == GameModes.CREATIVE));
   }
 
   static void removeBossBar(Player player) {

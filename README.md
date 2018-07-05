@@ -13,3 +13,7 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Boost Bar added
   * Boost on shift added
   * Added this README.md
+* 0.3 - Jake Moe - v0.3
+  * Fixed game mode check for all modes elytra flight are possible
+  * Added check for valid game mode in move event
+  * Added support for configuration via config file
