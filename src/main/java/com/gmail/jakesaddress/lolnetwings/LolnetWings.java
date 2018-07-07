@@ -12,7 +12,7 @@ import org.spongepowered.api.plugin.Plugin;
 
 @Plugin(id="lolnetwings",
         name = "Lolnet Wings",
-        version = "0.3",
+        version = "0.4",
         description = "Lolnet Wings for Sponge")
 public class LolnetWings {
 
@@ -44,13 +44,8 @@ public class LolnetWings {
   }
 
   @Listener
-  public void onGameStartingServerEvent(GameStartingServerEvent event) {
-    // setup command registration
-  }
-
-  @Listener
-  public void onGameStoppingServerEvent(GameStoppingServerEvent event) {
-    // save config here
+  public void onGameStoppingEvent(GameStoppingEvent event) {
+    getConfiguration().save();
   }
 
   ConfigurationLoader<CommentedConfigurationNode> getConfigLoader() {

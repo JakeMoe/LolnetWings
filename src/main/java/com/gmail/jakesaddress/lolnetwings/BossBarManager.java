@@ -6,8 +6,6 @@ import org.spongepowered.api.boss.ServerBossBar;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.serializer.TextSerializer;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.util.HashMap;
@@ -30,6 +28,13 @@ final class BossBarManager {
       newValue = 1;
     }
     serverBossBar.setPercent(newValue);
+    if (serverBossBar.getPercent() >= 1.0F) {
+      serverBossBar.setColor(BossBarColors.GREEN);
+    } else if (serverBossBar.getPercent() >= 0.5F) {
+      serverBossBar.setColor(BossBarColors.YELLOW);
+    } else {
+      serverBossBar.setColor(BossBarColors.RED);
+    }
   }
 
   static void createBossBar(Player player) {
