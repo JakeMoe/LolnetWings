@@ -36,6 +36,8 @@ public class EventListeners {
     if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false) &&
         BossBarManager.isValidGameMode(player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET))) {
 
+      BossBarManager.setBossBarVisible(player, false);
+
       Vector3d velocity = player.getVelocity();
       double speed = Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2) + Math.pow(velocity.getZ(), 2));
 
@@ -62,6 +64,8 @@ public class EventListeners {
         BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
       }
 
+    } else {
+      BossBarManager.setBossBarVisible(player, false);
     }
 
   }

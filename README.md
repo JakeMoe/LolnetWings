@@ -21,3 +21,6 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Fixed revision history in this README
   * Fixed boost logic to factor in direction player is looking
   * Fixed boost bar to display colours based on value (to match Jump boost bar)
+* 0.5 - Jake Moe - 8 July 2018
+  * Changed to make BossBarVisible visible when elytra flying and hidden when not
+  
