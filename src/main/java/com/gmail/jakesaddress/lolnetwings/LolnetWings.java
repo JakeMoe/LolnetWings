@@ -12,7 +12,7 @@ import org.spongepowered.api.plugin.Plugin;
 
 @Plugin(id="lolnetwings",
         name = "Lolnet Wings",
-        version = "0.4",
+        version = "0.5",
         description = "Lolnet Wings for Sponge")
 public class LolnetWings {
 
