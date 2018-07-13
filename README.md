@@ -25,3 +25,6 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Changed to make BossBarVisible visible when elytra flying and hidden when not
 * 0.6 - Jake Moe - 13 July 2018
   * Fixed false to true in EventListeners when flying
+  * Added original code back in to boost if level-ish and slow
+  * Added config options for sneak and level boost amounts
+  * Added check for flying on game mode change

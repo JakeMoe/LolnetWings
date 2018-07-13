@@ -27,7 +27,7 @@ public class EventListeners {
 
   @Listener
   public void onChangeGameMode(ChangeGameModeEvent event, @Getter("getTargetEntity") Player player) {
-    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()));
+    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()) && player.get(Keys.IS_ELYTRA_FLYING).orElse(false));
   }
 
   @Listener
@@ -58,8 +58,11 @@ public class EventListeners {
           Vector3d adjustedVelocity = velocity.add(newVelocity).mul(0.5).mul(1.1);
           player.setVelocity(adjustedVelocity);
           double newSpeed = Math.sqrt(Math.pow(adjustedVelocity.getX(), 2) + Math.pow(adjustedVelocity.getY(), 2) + Math.pow(adjustedVelocity.getZ(), 2));
-          BossBarManager.changeBossBarValue(player, (float) -((newSpeed * 1.1) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
+          BossBarManager.changeBossBarValue(player, (float) -((newSpeed * LolnetWings.getInstance().getConfiguration().getConfigMapper().getSneakBoost()) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
         }
+      } else if(player.getRotation().getX() > -20 &&
+                speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
+        player.setVelocity(player.getVelocity().mul(LolnetWings.getInstance().getConfiguration().getConfigMapper().getLevelBoost()));
       } else {
         BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
       }

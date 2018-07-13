@@ -15,6 +15,15 @@ class ConfigurationMapper {
   @Setting(value = "drain-multiplier", comment = "Adjust this to change the drain rate")
   private float drainMultiplier = 1;
 
+  @Setting(value = "target-speed", comment = "When under this speed, boost the player")
+  private float targetSpeed = 1.1F;
+
+  @Setting(value = "sneak-boost", comment = "Amount to boost when sneaking")
+  private float sneakBoost = 1.1F;
+
+  @Setting(value = "level-boost", comment = "Amount to boost when level-ish")
+  private float levelBoost = 1.1F;
+
   String getBossBarTitle() {
     return bossBarTitle;
   }
@@ -25,6 +34,18 @@ class ConfigurationMapper {
 
   float getFillMultiplier() {
     return fillMultiplier;
+  }
+
+  float getTargetSpeed() {
+    return targetSpeed;
+  }
+
+  float getSneakBoost() {
+    return sneakBoost;
+  }
+
+  float getLevelBoost() {
+    return levelBoost;
   }
 
 }
