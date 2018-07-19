@@ -3,6 +3,7 @@ package com.gmail.jakesaddress.lolnetwings;
 import com.flowpowered.math.vector.Vector3d;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
@@ -28,13 +29,18 @@ public class EventListeners {
   @Listener
   public void onChangeGameMode(ChangeGameModeEvent event, @Getter("getTargetEntity") Player player) {
     BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()) && player.get(Keys.IS_ELYTRA_FLYING).orElse(false));
+    if (event.getGameMode() == GameModes.CREATIVE) {
+      BossBarManager.setBossBarValue(player, 1.0F);
+    }
   }
 
   @Listener
   public void onMoveEntity(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
 
+    GameMode playerGameMode = player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
+
     if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false) &&
-        BossBarManager.isValidGameMode(player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET))) {
+        BossBarManager.isValidGameMode(playerGameMode)) {
 
       BossBarManager.setBossBarVisible(player, true);
 
@@ -46,25 +52,29 @@ public class EventListeners {
         Location<World> to = event.getToTransform().getLocation();
 
         if (BossBarManager.getBossBarValue(player) > 0 &&
-            to.getBlockY() < to.getExtent().getDimension().getBuildHeight()) {
+          to.getBlockY() < to.getExtent().getDimension().getBuildHeight()) {
 
           Vector3d rotation = player.getRotation();
           Vector3d newVelocity = new Vector3d(speed * Math.sin((180 - rotation.getY()) * (Math.PI / 180)) * Math.cos((180 - rotation.getX()) * (Math.PI / 180)),
-                                              speed * Math.sin(-rotation.getX() * (Math.PI / 180)),
-                                              speed * Math.cos(rotation.getY() * (Math.PI / 180)) * Math.cos(rotation.getX() * (Math.PI / 180)));
-/*          Vector3d adjustedVelocity = new Vector3d(((velocity.getX() + newVelocity.getX()) / 2) * 1.1,
-                                                   ((velocity.getY() + newVelocity.getY()) / 2) * 1.1,
-                                                   ((velocity.getZ() + newVelocity.getZ()) / 2) * 1.1); */
+            speed * Math.sin(-rotation.getX() * (Math.PI / 180)),
+            speed * Math.cos(rotation.getY() * (Math.PI / 180)) * Math.cos(rotation.getX() * (Math.PI / 180)));
           Vector3d adjustedVelocity = velocity.add(newVelocity).mul(0.5).mul(1.1);
           player.setVelocity(adjustedVelocity);
           double newSpeed = Math.sqrt(Math.pow(adjustedVelocity.getX(), 2) + Math.pow(adjustedVelocity.getY(), 2) + Math.pow(adjustedVelocity.getZ(), 2));
-          BossBarManager.changeBossBarValue(player, (float) -((newSpeed * LolnetWings.getInstance().getConfiguration().getConfigMapper().getSneakBoost()) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
+
+          if (!(playerGameMode == GameModes.CREATIVE)) {
+            BossBarManager.changeBossBarValue(player, (float) -((newSpeed * LolnetWings.getInstance().getConfiguration().getConfigMapper().getSneakBoost()) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
+          }
         }
-      } else if(player.getRotation().getX() > -20 &&
-                speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
+      } else if (player.getRotation().getX() > -20 &&
+        speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
         player.setVelocity(player.getVelocity().mul(LolnetWings.getInstance().getConfiguration().getConfigMapper().getLevelBoost()));
       } else {
-        BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
+        if (playerGameMode == GameModes.CREATIVE) {
+          BossBarManager.setBossBarValue(player, 1.0F);
+        } else {
+          BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
+        }
       }
 
     } else {

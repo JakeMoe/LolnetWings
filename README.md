@@ -28,3 +28,5 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Added original code back in to boost if level-ish and slow
   * Added config options for sneak and level boost amounts
   * Added check for flying on game mode change
+* 0.7 - Jake Moe - 19 July 2018
+  * Added infinite boost to Creative gamemode

@@ -37,6 +37,13 @@ final class BossBarManager {
     }
   }
 
+  static void setBossBarValue(Player player, float value) {
+    if (!bossBars.containsKey(player.getUniqueId())) {
+      createBossBar(player);
+    }
+    bossBars.get(player.getUniqueId()).setPercent(value);
+  }
+
   static void createBossBar(Player player) {
     if (!bossBars.containsKey(player.getUniqueId())) {
       ServerBossBar serverBossBar = ServerBossBar.builder()
