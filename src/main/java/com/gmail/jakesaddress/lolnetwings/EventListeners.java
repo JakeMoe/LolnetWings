@@ -6,14 +6,26 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.cause.entity.damage.source.DamageSource;
+import org.spongepowered.api.event.entity.DamageEntityEvent;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.ChangeGameModeEvent;
 import org.spongepowered.api.event.filter.Getter;
+import org.spongepowered.api.event.filter.cause.Root;
 import org.spongepowered.api.event.network.ClientConnectionEvent;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.common.registry.provider.DamageSourceToTypeProvider;
 
 public class EventListeners {
+
+  @Listener
+  public void onChangeGameMode(ChangeGameModeEvent event, @Getter("getTargetEntity") Player player) {
+    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()) && player.get(Keys.IS_ELYTRA_FLYING).orElse(false));
+    if (event.getGameMode() == GameModes.CREATIVE) {
+      BossBarManager.setBossBarValue(player, 1.0F);
+    }
+  }
 
   @Listener
   public void onClientConnectionDisconnect(ClientConnectionEvent.Disconnect event, @Getter("getTargetEntity") Player player) {
@@ -27,11 +39,16 @@ public class EventListeners {
   }
 
   @Listener
-  public void onChangeGameMode(ChangeGameModeEvent event, @Getter("getTargetEntity") Player player) {
-    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(event.getGameMode()) && player.get(Keys.IS_ELYTRA_FLYING).orElse(false));
-    if (event.getGameMode() == GameModes.CREATIVE) {
-      BossBarManager.setBossBarValue(player, 1.0F);
+  public void onDamageEntity(DamageEntityEvent event, @Getter("getTargetEntity") Player player, @Root DamageSource source) {
+
+    if (event.isCancelled()) {
+      return;
     }
+
+    if (DamageSourceToTypeProvider.getInstance().get("flyIntoWall").orElse(null) == source.getType()) {
+      event.setCancelled(player.get(Keys.IS_ELYTRA_FLYING).orElse(false));
+    }
+
   }
 
   @Listener
@@ -47,9 +64,9 @@ public class EventListeners {
       Vector3d velocity = player.getVelocity();
       double speed = Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2) + Math.pow(velocity.getZ(), 2));
 
-      if (player.get(Keys.IS_SNEAKING).orElse(false)) {
+      Location<World> to = event.getToTransform().getLocation();
 
-        Location<World> to = event.getToTransform().getLocation();
+      if (player.get(Keys.IS_SNEAKING).orElse(false)) {
 
         if (BossBarManager.getBossBarValue(player) > 0 &&
           to.getBlockY() < to.getExtent().getDimension().getBuildHeight()) {
@@ -67,8 +84,11 @@ public class EventListeners {
           }
         }
       } else if (player.getRotation().getX() > -20 &&
+        to.getBlockY() < to.getExtent().getDimension().getBuildHeight() &&
         speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
+
         player.setVelocity(player.getVelocity().mul(LolnetWings.getInstance().getConfiguration().getConfigMapper().getLevelBoost()));
+
       } else {
         if (playerGameMode == GameModes.CREATIVE) {
           BossBarManager.setBossBarValue(player, 1.0F);

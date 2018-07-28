@@ -6,7 +6,7 @@
 
   <groupId>com.gmail.JakesAddress</groupId>
   <artifactId>LolnetWings</artifactId>
-  <version>0.7</version>
+  <version>0.8</version>
 
   <repositories>
     <repository>
@@ -20,6 +20,13 @@
       <groupId>org.spongepowered</groupId>
       <artifactId>spongeapi</artifactId>
       <version>7.1.0-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spongepowered</groupId>
+      <artifactId>spongecommon</artifactId>
+      <version>7.1.0-SNAPSHOT</version>
+      <classifier>dev</classifier>
       <scope>provided</scope>
     </dependency>
   </dependencies>

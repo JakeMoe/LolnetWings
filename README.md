@@ -30,3 +30,6 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Added check for flying on game mode change
 * 0.7 - Jake Moe - 19 July 2018
   * Added infinite boost to Creative gamemode
+* 0.8 - Jake Moe - 27 July 2018
+  * Added check for y > 256 into level boost
+  * Cancelled damage event on flying into things
