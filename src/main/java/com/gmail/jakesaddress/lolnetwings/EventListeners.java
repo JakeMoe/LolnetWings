@@ -35,7 +35,6 @@ public class EventListeners {
   @Listener
   public void onClientConnectionJoin(ClientConnectionEvent.Join event, @Getter("getTargetEntity") Player player) {
     BossBarManager.createBossBar(player);
-    BossBarManager.setBossBarVisible(player, BossBarManager.isValidGameMode(player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET)));
   }
 
   @Listener
