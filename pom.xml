@@ -6,7 +6,7 @@
 
   <groupId>com.gmail.JakesAddress</groupId>
   <artifactId>LolnetWings</artifactId>
-  <version>0.8</version>
+  <version>0.9</version>
 
   <repositories>
     <repository>

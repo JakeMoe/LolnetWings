@@ -37,6 +37,10 @@ final class BossBarManager {
     }
   }
 
+  static boolean exists(Player player) {
+    return bossBars.containsKey(player.getUniqueId());
+  }
+
   static void setBossBarValue(Player player, float value) {
     if (!bossBars.containsKey(player.getUniqueId())) {
       createBossBar(player);

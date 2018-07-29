@@ -53,51 +53,54 @@ public class EventListeners {
   @Listener
   public void onMoveEntity(MoveEntityEvent event, @Getter("getTargetEntity") Player player) {
 
-    GameMode playerGameMode = player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
+    if (BossBarManager.exists(player)) {
+      GameMode playerGameMode = player.get(Keys.GAME_MODE).orElse(GameModes.NOT_SET);
 
-    if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false) &&
+      if (player.get(Keys.IS_ELYTRA_FLYING).orElse(false) &&
         BossBarManager.isValidGameMode(playerGameMode)) {
 
-      BossBarManager.setBossBarVisible(player, true);
+        BossBarManager.setBossBarVisible(player, true);
 
-      Vector3d velocity = player.getVelocity();
-      double speed = Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2) + Math.pow(velocity.getZ(), 2));
+        Vector3d velocity = player.getVelocity();
+        double speed = Math.sqrt(Math.pow(velocity.getX(), 2) + Math.pow(velocity.getY(), 2) + Math.pow(velocity.getZ(), 2));
 
-      Location<World> to = event.getToTransform().getLocation();
+        Location<World> to = event.getToTransform().getLocation();
 
-      if (player.get(Keys.IS_SNEAKING).orElse(false)) {
+        if (player.get(Keys.IS_SNEAKING).orElse(false)) {
 
-        if (BossBarManager.getBossBarValue(player) > 0 &&
-          to.getBlockY() < to.getExtent().getDimension().getBuildHeight()) {
+          if (BossBarManager.getBossBarValue(player) > 0 &&
+            to.getBlockY() < to.getExtent().getDimension().getBuildHeight()) {
 
-          Vector3d rotation = player.getRotation();
-          Vector3d newVelocity = new Vector3d(speed * Math.sin((180 - rotation.getY()) * (Math.PI / 180)) * Math.cos((180 - rotation.getX()) * (Math.PI / 180)),
-            speed * Math.sin(-rotation.getX() * (Math.PI / 180)),
-            speed * Math.cos(rotation.getY() * (Math.PI / 180)) * Math.cos(rotation.getX() * (Math.PI / 180)));
-          Vector3d adjustedVelocity = velocity.add(newVelocity).mul(0.5).mul(1.1);
-          player.setVelocity(adjustedVelocity);
-          double newSpeed = Math.sqrt(Math.pow(adjustedVelocity.getX(), 2) + Math.pow(adjustedVelocity.getY(), 2) + Math.pow(adjustedVelocity.getZ(), 2));
+            Vector3d rotation = player.getRotation();
+            Vector3d newVelocity = new Vector3d(speed * Math.sin((180 - rotation.getY()) * (Math.PI / 180)) * Math.cos((180 - rotation.getX()) * (Math.PI / 180)),
+              speed * Math.sin(-rotation.getX() * (Math.PI / 180)),
+              speed * Math.cos(rotation.getY() * (Math.PI / 180)) * Math.cos(rotation.getX() * (Math.PI / 180)));
+            Vector3d adjustedVelocity = velocity.add(newVelocity).mul(0.5).mul(1.1);
+            player.setVelocity(adjustedVelocity);
+            double newSpeed = Math.sqrt(Math.pow(adjustedVelocity.getX(), 2) + Math.pow(adjustedVelocity.getY(), 2) + Math.pow(adjustedVelocity.getZ(), 2));
 
-          if (!(playerGameMode == GameModes.CREATIVE)) {
-            BossBarManager.changeBossBarValue(player, (float) -((newSpeed * LolnetWings.getInstance().getConfiguration().getConfigMapper().getSneakBoost()) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
+            if (!(playerGameMode == GameModes.CREATIVE)) {
+              BossBarManager.changeBossBarValue(player, (float) -((newSpeed * LolnetWings.getInstance().getConfiguration().getConfigMapper().getSneakBoost()) / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getDrainMultiplier());
+            }
+          }
+        } else if (player.getRotation().getX() > -20 &&
+          to.getBlockY() < to.getExtent().getDimension().getBuildHeight() &&
+          speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
+
+          player.setVelocity(player.getVelocity().mul(LolnetWings.getInstance().getConfiguration().getConfigMapper().getLevelBoost()));
+
+        } else {
+          if (playerGameMode == GameModes.CREATIVE) {
+            BossBarManager.setBossBarValue(player, 1.0F);
+          } else {
+            BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
           }
         }
-      } else if (player.getRotation().getX() > -20 &&
-        to.getBlockY() < to.getExtent().getDimension().getBuildHeight() &&
-        speed < LolnetWings.getInstance().getConfiguration().getConfigMapper().getTargetSpeed()) {
-
-        player.setVelocity(player.getVelocity().mul(LolnetWings.getInstance().getConfiguration().getConfigMapper().getLevelBoost()));
 
       } else {
-        if (playerGameMode == GameModes.CREATIVE) {
-          BossBarManager.setBossBarValue(player, 1.0F);
-        } else {
-          BossBarManager.changeBossBarValue(player, (float) (speed / 100) * LolnetWings.getInstance().getConfiguration().getConfigMapper().getFillMultiplier());
-        }
+        BossBarManager.setBossBarVisible(player, false);
       }
 
-    } else {
-      BossBarManager.setBossBarVisible(player, false);
     }
 
   }

@@ -34,3 +34,5 @@ LolnetWings is a custom plugin for the Minecraft servers at https://www.lolnet.c
   * Added check for y > 256 into level boost
   * Cancelled damage event on flying into things
   * Removed incorrect check for gamemode on client connect
+* 0.9 - Jake Moe - 29 July 2018
+  * Fixed issue where Nuecleus fires Move event before Join event
